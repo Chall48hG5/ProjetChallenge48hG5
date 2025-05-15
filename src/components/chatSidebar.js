@@ -20,21 +20,29 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export default function ChatSidebar({room_id}) {
+export default function ChatSidebar({ room_id }) {
   const [pseudo, setPseudo] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
+  // Ajoute un message localement en pending
+  const addPendingMessage = (msg) => {
+    setMessages((prev) => [
+      ...prev,
+      { ...msg, pending: true, tempId: Date.now() + Math.random() },
+    ]);
+  };
 
   const sendMessage = async () => {
-    await supabase.from("chats").insert([
-      {
-        room_id,
-        pseudo,
-        message,
-        created_at: new Date().toISOString(),
-      },
-    ]);
+    const tempMsg = {
+      room_id,
+      pseudo,
+      message,
+      created_at: new Date().toISOString(),
+    };
+    addPendingMessage(tempMsg);
+
+    await supabase.from("chats").insert([tempMsg]);
     setMessage("");
   };
 
@@ -44,7 +52,15 @@ export default function ChatSidebar({room_id}) {
         .from("chats")
         .select()
         .order("created_at", { ascending: true });
-      setMessages(data);
+
+      setMessages((prev) => {
+        const pending = prev.filter((m) => m.pending);
+        const stillPending = pending.filter(
+          (p) =>
+            !data.some((d) => d.pseudo === p.pseudo && d.message === p.message)
+        );
+        return [...data, ...stillPending];
+      });
     };
 
     fetchMessages();
@@ -66,38 +82,50 @@ export default function ChatSidebar({room_id}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!pseudo.trim() || !message.trim()) return;
-    // await supabase.from("chats").insert([{ pseudo, message }]);
     await sendMessage();
     setMessage("");
   };
 
   return (
-    <Sidebar side="right" variant="default">
-      <SidebarContent className="h-full flex flex-col">
-        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
-          {messages.map((msg) => (
-            <div key={msg.id} className="text-sm">
-              <strong>{msg.pseudo}:</strong> {msg.message}
+    <>
+      <Sidebar side="right" variant="default">
+        {typeof room_id == "object" ? (
+          <SidebarContent>
+            <span>Veuillez selectioner un arrondissement</span>
+          </SidebarContent>
+        ) : (
+          <SidebarContent className="h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id || msg.tempId}
+                  className={`text-sm ${
+                    msg.pending ? "opacity-50 italic" : ""
+                  }`}
+                >
+                  <strong>{msg.pseudo}:</strong> {msg.message}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <form onSubmit={handleSubmit} className="p-4 border-t space-y-2">
-          <Input
-            placeholder="Votre nom"
-            value={pseudo}
-            onChange={(e) => setPseudo(e.target.value)}
-          />
-          <Input
-            placeholder="Votre message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <Button type="submit" className="w-full">
-            Envoyer
-          </Button>
-        </form>
-      </SidebarContent>
-    </Sidebar>
+            <form onSubmit={handleSubmit} className="p-4 border-t space-y-2">
+              <Input
+                placeholder="Votre nom"
+                value={pseudo}
+                onChange={(e) => setPseudo(e.target.value)}
+              />
+              <Input
+                placeholder="Votre message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+              <Button type="submit" className="w-full">
+                Envoyer
+              </Button>
+            </form>
+          </SidebarContent>
+        )}
+      </Sidebar>
+    </>
   );
 }
