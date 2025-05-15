@@ -1,25 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "../styles/map.css"
 
 const defaultStyle = {
-  fillColor: "#3388ff",
+  fillColor: "#ffffff", 
   weight: 2,
   opacity: 1,
-  color: "white",
+  color: "#999999", 
   dashArray: "3",
-  fillOpacity: 0.6,
+  fillOpacity: 0.7,
 };
 
 const highlightStyle = {
-  fillColor: "#ff7800",
+  fillColor: "#e53935", 
   weight: 2,
   opacity: 1,
-  color: "white",
+  color: "#b71c1c",
   dashArray: "3",
-  fillOpacity: 0.7,
+  fillOpacity: 0.8,
 };
 
 const Map = ({ geojsonData }) => {
@@ -34,7 +35,6 @@ const Map = ({ geojsonData }) => {
 
   const onEachArrondissement = (feature, layer) => {
     layer.bindPopup(`<strong>${feature.properties.nom}</strong>`);
-
     layer.on({
       click: () => {
         setSelectedFeature(feature);
@@ -43,23 +43,25 @@ const Map = ({ geojsonData }) => {
   };
 
   return (
-    <MapContainer  
-      center={[45.75, 4.85]}
-      zoom={12}
-      style={{ height: "500px", width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-      />
-
-      <GeoJSON
-        key={selectedFeature?.properties.nom || "default"}
-        data={geojsonData}
-        style={styleFeature}
-        onEachFeature={onEachArrondissement}
-      />
-    </MapContainer>
+    <div className="w-[500px] h-[500px]">
+      <MapContainer
+        center={[45.75, 4.85]}
+        zoom={12}
+        style={{ height: "100%", width: "100%", backgroundColor: "#ffffff"}}
+        scrollWheelZoom={false}
+        doubleClickZoom={false}
+        dragging={false}
+        zoomControl={false}
+        attributionControl={false}
+      >
+        <GeoJSON
+          key={selectedFeature?.properties.nom || "default"}
+          data={geojsonData}
+          style={styleFeature}
+          onEachFeature={onEachArrondissement}
+        />
+      </MapContainer>
+    </div>
   );
 };
 
