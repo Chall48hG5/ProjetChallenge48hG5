@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import dynamic from "next/dynamic";
 import ChatSidebar from "@/components/chatSidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 const Map = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -52,8 +57,22 @@ export default function RatioPage() {
 
   return (
     <>
-      <Map geojsonData={geojsonData} onSelectArrondissement={handleSelectArrondissement} />
-      <ChatSidebar room_id={room_id}></ChatSidebar>
+      <div className="flex flex-row justify-center h-screen">
+          <div className="w-full h-1/2">
+            <Map
+              geojsonData={geojsonData}
+              onSelectArrondissement={handleSelectArrondissement}
+            />
+          </div>
+          <div className="h-screen">
+            <SidebarProvider>
+              <SidebarInset>
+                <SidebarTrigger>Chat</SidebarTrigger>
+                <ChatSidebar room_id={room_id} />
+              </SidebarInset>
+            </SidebarProvider>
+        </div>
+      </div>
     </>
   );
 }
