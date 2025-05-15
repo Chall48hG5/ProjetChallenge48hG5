@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "../styles/map.css"
-import { MapContainer, GeoJSON } from "react-leaflet";
+import { MapContainer, GeoJSON, TileLayer } from "react-leaflet";
 
 const defaultStyle = {
   fillColor: "#ffffff", 
@@ -43,7 +43,6 @@ const Map = ({ geojsonData }) => {
   };
 
   return (
-    <div className="w-[500px] h-[500px]">
       <MapContainer
         center={[45.75, 4.85]}
         zoom={12}
@@ -54,6 +53,10 @@ const Map = ({ geojsonData }) => {
         zoomControl={false}
         attributionControl={false}
       >
+        <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
+      />
         <GeoJSON
           key={selectedFeature?.properties.nom || "default"}
           data={geojsonData}
@@ -61,7 +64,6 @@ const Map = ({ geojsonData }) => {
           onEachFeature={onEachArrondissement}
         />
       </MapContainer>
-    </div>
   );
 };
 

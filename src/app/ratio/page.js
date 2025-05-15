@@ -54,7 +54,9 @@ export default function RatioPage() {
           </li>
         ))}
       </ul>
-      <Map geojsonData={geojsonData} />
+      <div className="h-[500px] w-[500px]">
+        <Map geojsonData={geojsonData} />
+      </div>
     </>
   );
 }
