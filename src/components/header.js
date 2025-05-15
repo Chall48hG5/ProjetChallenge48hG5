@@ -22,15 +22,9 @@ const styles = {
 
 const Header = () => {
     return (
-        <header className="bg-gray-800 text-white text-center">
+        <header className="bg-gray-800 text-white p-4 flex justify-between">
         <h1 className="text-5xl">V.I.G.I.L</h1>
-        <nav>
-            <ul style={styles.header}>
-            <li><a href="/prevention" style={styles.button} className="hover:text-gray-400" >Prévention</a></li>
-            <li><a href="/prediction" style={styles.button} className="hover:text-gray-400">Prédiction</a></li>
-            <li><a href="/actualite" style={styles.button} className="hover:text-gray-400">Actualité</a></li>
-            </ul>
-        </nav>
+        
         </header>
     );
 }
