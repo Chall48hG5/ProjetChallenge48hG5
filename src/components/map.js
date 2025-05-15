@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/map.css"
+import { MapContainer, GeoJSON } from "react-leaflet";
 
 const defaultStyle = {
   fillColor: "#ffffff", 
