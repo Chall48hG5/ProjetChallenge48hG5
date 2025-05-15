@@ -20,12 +20,11 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export default function ChatSidebar() {
+export default function ChatSidebar({room_id}) {
   const [pseudo, setPseudo] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
-  const room_id = 3;
 
   const sendMessage = async () => {
     await supabase.from("chats").insert([

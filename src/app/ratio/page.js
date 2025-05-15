@@ -18,6 +18,7 @@ export default function RatioPage() {
   );
 
   const [instruments, setInstruments] = useState([]);
+  const [room_id, setRoom_id] = useState([])
 
   useEffect(() => {
     const getInstruments = async () => {
@@ -44,17 +45,15 @@ export default function RatioPage() {
     };
   }, []);
 
+  // Fonction pour gérer la sélection d'un arrondissement
+  const handleSelectArrondissement = (arrondissement) => {
+    setRoom_id(arrondissement);
+  };
+
   return (
     <>
-      {/* <ul>
-        {instruments.map((item) => (
-          <li key={item.id}>
-            <strong>{item.pseudo} :</strong> {item.message}
-          </li>
-        ))}
-      </ul> */}
-      <Map geojsonData={geojsonData} />
-      <ChatSidebar></ChatSidebar>
+      <Map geojsonData={geojsonData} onSelectArrondissement={handleSelectArrondissement} />
+      <ChatSidebar room_id={room_id}></ChatSidebar>
     </>
   );
 }
