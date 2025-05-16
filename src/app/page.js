@@ -1,103 +1,148 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from "react";
+import geojsonData from "../data/metropole-de-lyon_adr_voie_lieu.adrarrond.json";
+import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+import dynamic from "next/dynamic";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Chat from "@/components/Chat";
+import ArrondissementDetails from "@/components/ArrondissementDetails";
+
+const Map = dynamic(() => import("@/components/map"), {
+  ssr: false,
+});
+
+const mockData = {
+  seismes: [
+    { date: "2024-03-20", magnitude: 2.1, probabilite: "15%" },
+    { date: "2024-03-25", magnitude: 1.8, probabilite: "10%" },
+    { date: "2024-03-28", magnitude: 1.5, probabilite: "5%" },
+  ],
+  // ,
+  // alertes: [
+  //   { type: 'Météo', message: 'Risque de fortes pluies ce weekend' },
+  //   { type: 'Travaux', message: 'Rénovation de la rue principale du 15 au 20 avril' },
+  //   { type: 'Transport', message: 'Perturbations sur la ligne de métro A' },
+  // ],
+  activites: [
+    {
+      nom: "Distribution de provisions",
+      date: "2024-04-01",
+      lieu: "Place centrale",
+    },
+    {
+      nom: "Point médical mobile",
+      date: "2024-04-02",
+      lieu: "Place du marché",
+    },
+    { nom: "Réunion d'information", date: "2024-04-05", lieu: "Mairie" },
+    {
+      nom: "Centre d'accueil temporaire",
+      date: "2024-04-08",
+      lieu: "Gymnase municipal",
+    },
+  ],
+};
+
+export default function RatioPage() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  const [messages, setMessages] = useState([]);
+  const [alerts, setAlerts] = useState();
+  const [selectedArrondissement, setSelectedArrondissement] = useState(null);
+
+  useEffect(() => {
+    const getMessages = async () => {
+      const { data: messages } = await supabase
+        .from("chats")
+        .select()
+        .order("created_at", { ascending: true });
+      setMessages(messages || []);
+    };
+
+    const getAlerts = async () => {
+      const { data: alerts } = await supabase
+        .from("alerts")
+        .select()
+        .order("created_at", { ascending: true });
+      console.log("aaaaaaaaaa", alerts);
+      setAlerts(alerts || []);
+    };
+
+    getMessages();
+    getAlerts();
+
+    const subscription = supabase
+      .channel("live")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "chats" },
+        (payload) => {
+          getMessages();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSelectArrondissement = (arrondissement) => {
+    setSelectedArrondissement(arrondissement);
+  };
+
+  const handleSendMessage = async (message) => {
+    await supabase.from("chats").insert([
+      {
+        message,
+        room_id: selectedArrondissement || "general",
+        pseudo: "anonymous",
+      },
+    ]);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <Header />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+        {/* Section carte et détails */}
+        <div className="lg:col-span-9">
+          <div className="h-[500px] bg-white">
+            <Map
+              geojsonData={geojsonData}
+              onSelectArrondissement={handleSelectArrondissement}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+
+          {selectedArrondissement && (
+            <div className="bg-white border-t">
+              <ArrondissementDetails
+                arrondissement={selectedArrondissement}
+                data={mockData}
+                alerts={alerts}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Section chat */}
+        <div className="lg:col-span-3 bg-white border-l">
+          <Chat
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            arrondissement={selectedArrondissement || "Général"}
+          />
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <Footer />
     </div>
   );
 }

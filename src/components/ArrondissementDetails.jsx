@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ArrondissementDetails = ({ arrondissement, data }) => {
+const ArrondissementDetails = ({ arrondissement, data, alerts}) => {
   return (
     <div className="bg-white rounded-lg shadow-lg">
       <div className="p-6 border-b">
@@ -51,6 +51,8 @@ const ArrondissementDetails = ({ arrondissement, data }) => {
             </div>
           </div>
 
+          <button onClick={() => {console.log(alerts)}}>adaizdiazbdia</button>
+
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
               <svg className="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,22 +61,22 @@ const ArrondissementDetails = ({ arrondissement, data }) => {
               Alertes en cours
             </h3>
             <div className="space-y-3">
-              {data.alertes.map((alerte, index) => (
+            { alerts.length > 0 ? alerts.map((alerte, index) => (
                 <div
                   key={index}
                   className="bg-gray-50 rounded-lg p-4 border-l-4 border-yellow-400"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="font-medium text-gray-800">{alerte.type}</span>
-                      <p className="text-gray-600 mt-1">{alerte.message}</p>
+                      <span className="font-medium text-gray-800">{alerte.name}</span>
+                      <p className="text-gray-600 mt-1">{alerte.description}</p>
                     </div>
                     <button className="text-blue-500 hover:text-blue-600">
                       En savoir plus
                     </button>
                   </div>
                 </div>
-              ))}
+              )): (<span></span>)}
             </div>
           </div>
         </section>

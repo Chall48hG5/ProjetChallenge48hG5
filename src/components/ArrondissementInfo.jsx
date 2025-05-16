@@ -8,7 +8,7 @@ const ArrondissementInfo = ({ arrondissement, onClose }) => {
       { date: '2024-03-25', magnitude: 1.8, probabilite: '10%' },
     ],
     alertes: [
-      { type: 'Météo', message: 'Risque de fortes pluies ce weekend' },
+      { type: 'Météo', message: 'Risque de fortes pluies ce dddddddddddddddddddddddddd' },
       { type: 'Travaux', message: 'Rénovation de la rue principale du 15 au 20 avril' },
     ],
     activites: [
