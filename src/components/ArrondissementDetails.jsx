@@ -72,9 +72,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
                       <p className="text-gray-600 mt-1">Sismicité : {alerte.sismicite}</p>
 
                     </div>
-                    <button className="text-blue-500 hover:text-blue-600">
-                      En savoir plus
-                    </button>
+                    <p>{new Date(alerte.date).toLocaleDateString()}</p>
                   </div>
                 </div>
               )): (<span>Aucune alerte en cour dans ce quartier</span>)}
