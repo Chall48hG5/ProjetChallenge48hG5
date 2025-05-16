@@ -32,7 +32,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
               Prévisions Sismiques
             </h3>
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-              {/* {data.seismes.map((seisme, index) => (
+              {data.seismes.map((seisme, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="w-2 h-2 rounded-full bg-yellow-400 mr-2"></div>
@@ -47,7 +47,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
                     </span>
                   </div>
                 </div>
-              ))} */}
+              ))}
             </div>
           </div>
 

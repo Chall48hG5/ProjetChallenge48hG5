@@ -28,10 +28,6 @@ export default function RatioPage() {
   //   process.env.NEXT_PUBLIC_SUPABASE_URL,
   //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   // );
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
 
   const zones = [
     { id: 1, value: 128 },
@@ -188,7 +184,14 @@ export default function RatioPage() {
             <div className="bg-white border-t">
               <ArrondissementDetails
                 arrondissement={selectedArrondissement}
-                data={{}}
+                data={{
+                  seismes: [
+                    { date: "2024-04-01", magnitude: 5.0, probabilite: "10%" },
+                    { date: "2024-04-02", magnitude: 4.5, probabilite: "20%" },
+                  ],
+                  alertes: alerts.filter((a) => a.arrondissement === selectedArrondissement),
+                  activites: activities.filter((a) => a.arrondissement === selectedArrondissement),
+                }}
                 alerts={alerts}
                 activities={activities}
               />
