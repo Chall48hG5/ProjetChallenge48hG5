@@ -65,6 +65,19 @@ split_data_padded <- lapply(split_data, function(x) {
 df <- as.data.frame(do.call(rbind, split_data_padded), stringsAsFactors = FALSE)
 colnames(df) <- header
 
+# Supprimer la première colonne si elle est vide ou inutile (ex: index auto de write.csv)
+if (colnames(df)[1] %in% c("", "...1", "X1")) {
+  df <- df[, -1]
+}
+
+# Nettoyer la colonne 'quartier' pour extraire uniquement le numéro de la zone
+df$quartier <- str_extract(df$quartier, "\\d+")
+
+# Nettoyer la colonne 'catastrophe' en supprimant [, ], et '
+df$catastrophe <- str_replace_all(df$catastrophe, "\\[|\\]|'", "")
+
+
+
 # Exemple : vérification dossier courant
 cat("Le dossier de travail actuel est :", getwd(), "\n")
 
