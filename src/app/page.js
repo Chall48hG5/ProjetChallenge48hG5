@@ -141,7 +141,7 @@ export default function RatioPage() {
       const { data: filteredActivities } = await supabase
         .from("activities")
         .select()
-        .eq("district", selectedArrondissement)
+        .eq("quartier", selectedArrondissement)
         .order("date", { ascending: true });
       setActivities(filteredActivities || []);
     };

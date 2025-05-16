@@ -29,7 +29,6 @@ export default function ChatSidebar({ room_id }) {
   };
 
   const sendMessage = async () => {
-    console.log("sssssssssssssss")
     const tempMsg = {
       room_id,
       pseudo,

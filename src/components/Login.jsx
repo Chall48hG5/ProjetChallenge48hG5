@@ -43,7 +43,6 @@ const LoginForm = ({ onSuccess }) => {
       setErrorMsg(error.message);
     } else {
       setSuccessMsg("Connexion réussie !");
-      console.log("User:", data.user);
       if (onSuccess) onSuccess();
     }
   };
