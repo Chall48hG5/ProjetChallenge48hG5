@@ -87,7 +87,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
             Activités à venir
           </h3>
           <div className="space-y-4">
-            {activities.length > 0 ? activities.map((activite, index) => (
+            {activities.length > 0 ? activities.filter((a) => {return a.district == arrondissement}).map((activite, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"

@@ -81,7 +81,6 @@ export default function RatioPage() {
         .from("activities")
         .select()
         .order("date", { ascending: true });
-      console.log("test10", activities);
       setActivities(activities || []);
     }
 
@@ -107,6 +106,14 @@ export default function RatioPage() {
 
   const handleSelectArrondissement = (arrondissement) => {
     setSelectedArrondissement(arrondissement);
+    // console.log(arrondissement)
+    // console.log(activities)
+    // setActivities(activities.filter((activity) => {
+    //   console.log(activity  )
+    //   // return activity.district == arrondissement
+    // }
+    // )
+    // );
   };
 
   const handleSendMessage = async (message) => {
