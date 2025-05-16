@@ -15,7 +15,7 @@ if (length(script_path) == 1) {
 }
 
 
-# Fonction pour splitter une ligne sur les virgules hors des crochets
+# Fonction pour splitter une ligne 
 split_line_outside_brackets <- function(text) {
   out <- c()
   current <- ""
@@ -41,46 +41,45 @@ split_line_outside_brackets <- function(text) {
   return(out)
 }
 
-# Vérifie que le fichier "Bdd.csv" existe dans le dossier courant
+# Vérifie que le fichier "Bdd.csv" existe 
 if (!file.exists("Bdd.csv")) {
   stop("Le fichier Bdd.csv n'existe pas dans le dossier courant : ", getwd())
 }
 # Lire les lignes
 lines <- readLines("Bdd.csv")
 
-# S�parer l'en-t�te des donn�es
+# Separer l en tete
 header <- split_line_outside_brackets(lines[1])
 data_lines <- lines[-1]
 
-# Appliquer le traitement sur les lignes de donn�es
 split_data <- lapply(data_lines, split_line_outside_brackets)
 
-# Ajustement des lignes in�gales
-max_len <- length(header)  # On prend le header comme r�f�rence
+# Ajustement des lignes inegales
+max_len <- length(header)  
 split_data_padded <- lapply(split_data, function(x) {
   c(x, rep(NA, max_len - length(x)))
 })
 
-# Cr�ation du DataFrame avec noms de colonnes
+# Creation du DataFrame avec noms de colonnes
 df <- as.data.frame(do.call(rbind, split_data_padded), stringsAsFactors = FALSE)
 colnames(df) <- header
 
-# Supprimer la première colonne si elle est vide ou inutile (ex: index auto de write.csv)
+# Supprimer la première colonne
 if (colnames(df)[1] %in% c("", "...1", "X1")) {
   df <- df[, -1]
 }
 
-# Nettoyer la colonne 'quartier' pour extraire uniquement le numéro de la zone
+# Nettoyer la colonne 'quartier' 
 df$quartier <- str_extract(df$quartier, "\\d+")
 
-# Nettoyer la colonne 'catastrophe' en supprimant [, ], et '
+# Nettoyer la colonne 'catastrophe' 
 df$catastrophe <- str_replace_all(df$catastrophe, "\\[|\\]|'", "")
 
 
 
-# Exemple : vérification dossier courant
+# Exemple  vérification dossier courant
 cat("Le dossier de travail actuel est :", getwd(), "\n")
 
-# Export du CSV dans le dossier courant (celui où tu lances le script)
+# Export du CSV dans le dossier 
 write.csv(df, "CleanData.csv", row.names = FALSE, na = "")
 cat("Fichier CleanData.csv créé avec succès dans le dossier courant.\n")
