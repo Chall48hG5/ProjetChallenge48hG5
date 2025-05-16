@@ -15,6 +15,8 @@ if (length(script_path) == 1) {
 # Lancer ClearBdd.R pour générer CleanData.csv
 source("ClearBdd.R")
 
+options(repos = c(CRAN = "https://cran.r-project.org"))
+
 # ─── Configuration Initiale ─────────────────────────────────────────────────────
 # Installation et chargement des packages nécessaires
 packages <- c("dplyr", "stringr", "randomForest", "caret")
@@ -114,6 +116,42 @@ predictions <- predict(rf_model, test_data)
 conf_matrix <- caret::confusionMatrix(factor(predictions), factor(test_data$has_catastrophe_multi))
 # Affichage de la matrice de confusion complète
 print(conf_matrix)
+# ─── Tableau de confusion inversé (lignes = Réalité, colonnes = Prédictions) ─────────────
+conf_table <- as.data.frame.matrix(t(conf_matrix$table))  # transposer ici
+
+# Réordonner pour que les lignes soient dans le bon ordre
+conf_table <- conf_table[c("aucun", "seisme", "innondation", "innondation, seisme"), 
+                         c("aucun", "seisme", "innondation", "innondation, seisme")]
+
+# Ajouter une colonne "Réalité" pour plus de clarté
+conf_table <- cbind(Realite = rownames(conf_table), conf_table)
+
+
+# Sauvegarder dans un CSV
+write.csv(conf_table, "confusion_matrix_tableau.csv", row.names = FALSE)
+cat("✅ Tableau de confusion sauvegardé dans confusion_matrix_tableau.csv\n")
+
+# Installer et charger gridExtra si nécessaire
+if (!require(gridExtra)) {
+  install.packages("gridExtra", dependencies = TRUE)
+  library(gridExtra)
+}
+
+if (!require(grid)) {
+  install.packages("grid", dependencies = TRUE)
+  library(grid)
+}
+
+# Convertir conf_table en table grob
+table_grob <- tableGrob(conf_table)
+
+# Enregistrer le tableau en image PNG
+png(filename = "confusion_matrix_tableau.png", width = 700, height = 200)
+grid.draw(table_grob)
+dev.off()
+
+cat("✅ Image PNG du tableau de confusion sauvegardée dans confusion_matrix_tableau.png\n")
+
 
 # Extraire les métriques par classe (Precision, Recall, F1)
 byClass <- conf_matrix$byClass
@@ -149,9 +187,6 @@ metrics_class[, -1] <- round(metrics_class[, -1], 3)
 cat("\n💡 Résumé visuel des métriques par classe :\n")
 print(metrics_class)
 
-# Sauvegarder ce résumé dans un CSV
-write.csv(metrics_class, "metrics_by_class.csv", row.names = FALSE)
-cat("Fichier metrics_by_class.csv créé avec le résumé des métriques par classe.\n")
 
 # Calcul manuel de la précision et du F1-score
 TP <- conf_matrix$table[2, 2]
