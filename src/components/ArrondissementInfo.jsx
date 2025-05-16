@@ -12,9 +12,9 @@ const ArrondissementInfo = ({ arrondissement, onClose }) => {
       { type: 'Travaux', message: 'Rénovation de la rue principale du 15 au 20 avril' },
     ],
     activites: [
-      { nom: 'Festival de Jazz', date: '2024-04-01', lieu: 'Place centrale' },
-      { nom: 'Marché Bio', date: '2024-04-02', lieu: 'Place du marché' },
-      { nom: 'Exposition d\'art', date: '2024-04-05', lieu: 'Galerie municipale' },
+      { nom: 'Festival de Jazz', date: '2171-04-01', lieu: 'Place centrale' },
+      { nom: 'Marché Bio', date: '2171-04-02', lieu: 'Place du marché' },
+      { nom: 'Exposition d\'art', date: '2171-04-05', lieu: 'Galerie municipale' },
     ],
   };
 

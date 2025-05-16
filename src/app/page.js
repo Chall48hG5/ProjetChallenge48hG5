@@ -141,7 +141,7 @@ export default function RatioPage() {
       const { data: filteredActivities } = await supabase
         .from("activities")
         .select()
-        .eq("quartier", selectedArrondissement)
+        .eq("district", selectedArrondissement)
         .order("date", { ascending: true });
       setActivities(filteredActivities || []);
     };
@@ -234,8 +234,8 @@ export default function RatioPage() {
                 arrondissement={selectedArrondissement}
                 data={{
                   seismes: [
-                    { date: "2024-04-01", magnitude: 5.0, probabilite: "10%" },
-                    { date: "2024-04-02", magnitude: 4.5, probabilite: "20%" },
+                    { date: "2171-04-01", magnitude: 5.0, probabilite: "10%" },
+                    { date: "2171-04-02", magnitude: 4.5, probabilite: "20%" },
                   ],
                   alertes: alerts.filter(
                     (a) => a.arrondissement === selectedArrondissement

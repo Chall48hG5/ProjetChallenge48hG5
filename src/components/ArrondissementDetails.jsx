@@ -9,9 +9,6 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
             <h2 className="text-2xl font-semibold text-gray-800">
               {arrondissement}ème arrondissement
             </h2>
-            <p className="text-gray-500 mt-1">
-              Dernière mise à jour: {new Date().toLocaleDateString()}
-            </p>
           </div>
           <div className="flex items-center space-x-2">
             {/* changer le niveau d'alerte pour un vrai truc */}
