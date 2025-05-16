@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import geojsonData from "../data/metropole-de-lyon_adr_voie_lieu.adrarrond.json";
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 import dynamic from "next/dynamic";
 
 import Header from "@/components/Header";
@@ -125,12 +125,12 @@ export default function RatioPage() {
     await supabase.from("chats").insert([
       {
         message,
+        user_id: user.id,
         room_id: selectedArrondissement || "general",
-        pseudo: user?.email || "anonymous", // utilise email si connecté
+        pseudo: user?.email || "anonymous",
       },
     ]);
   };
-  // Callback à passer au formulaire login, pour fermer modal à succès
   const handleLoginSuccess = () => {
     setIsLoginOpen(false);
   };
@@ -171,6 +171,7 @@ export default function RatioPage() {
         {/* Section chat */}
         <div className="lg:col-span-3 bg-white border-l">
           <Chat
+            user={user}
             messages={messages}
             onSendMessage={handleSendMessage}
             arrondissement={selectedArrondissement || "Général"}

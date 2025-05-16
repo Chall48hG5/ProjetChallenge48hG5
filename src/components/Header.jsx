@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 // );
 
 const Header = ({ onLoginClick, onRegisterClick, user, onLogout }) => {
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     if (onLogout) onLogout();
