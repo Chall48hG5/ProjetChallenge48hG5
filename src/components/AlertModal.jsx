@@ -58,9 +58,10 @@ const AlertModal = () => {
     const { error } = await supabase.from("alert").insert({
       temperature: parseFloat(form.temperature),
       humidite: parseFloat(form.humidite),
-      sismicite: parseFloat(form.sismicite), // <-- float here
+      sismicite: parseFloat(form.sismicite),
       catastrophe: form.catastrophe,
-      quartier: zone.value,
+      quartier: form.arrondissement,
+      date: new Date(new Date().setFullYear(2171)).toISOString(),
     });
 
     setLoading(false);

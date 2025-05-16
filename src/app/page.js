@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { SubscriptIcon } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/map"), { ssr: false });
 
@@ -103,6 +104,52 @@ export default function RatioPage() {
     getAlerts();
     getActivities();
 
+
+    const getFilteredAlerts = async () => {
+      const { data: filteredAlerts } = await supabase
+        .from("alert")
+        .select()
+        .eq("quartier", selectedArrondissement)
+        .order("date", { ascending: true });
+      setAlerts(filteredAlerts || []);
+    };
+
+    
+
+    return () => {
+      // subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedArrondissement) return;
+
+    const getFilteredAlerts = async () => {
+      const { data: filteredAlerts } = await supabase
+        .from("alert")
+        .select()
+        .eq("quartier", selectedArrondissement)
+        .order("date", { ascending: true });
+      setAlerts(filteredAlerts || []);
+    };
+
+    const getFilteredActivities = async () => {
+      const { data: filteredActivities } = await supabase
+        .from("activities")
+        .select()
+        .eq("district", selectedArrondissement)
+        .order("date", { ascending: true });
+      setActivities(filteredActivities || []);
+    };
+
+     const getMessages = async () => {
+      const { data: messages } = await supabase
+        .from("chats")
+        .select()
+        .order("created_at", { ascending: true });
+      setMessages(messages || []);
+    };
+
     const subscription = supabase
       .channel("live")
       .on(
@@ -111,36 +158,34 @@ export default function RatioPage() {
         getMessages
       )
       .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "alert" },
-      (payload) => {
-        getAlerts();
-      }
+        "postgres_changes",
+        { event: "*", schema: "public", table: "alert" },
+        (payload) => {
+          getFilteredAlerts();
+        }
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "activities" },
-        getActivities
+        getFilteredActivities
       )
       .subscribe();
 
+    getFilteredAlerts();
+    getFilteredActivities();
+
     return () => {
-      subscription.unsubscribe();
+      SubscriptIcon.unsubscribe()
     };
-  }, []);
+  }, [selectedArrondissement]);
 
   const handleSelectArrondissement = (arrondissement) => {
+    console.log(alerts);
 
     let zone = zones.find((z) => z.value === arrondissement);
+
     setSelectedArrondissement(zone.id);
-    // console.log(arrondissement)
-    // console.log(activities)
-    // setActivities(activities.filter((activity) => {
-    //   console.log(activity  )
-    //   // return activity.district == arrondissement
-    // }
-    // )
-    // );
+    console.log(selectedArrondissement);
   };
 
   const handleSendMessage = async (message) => {
@@ -155,6 +200,7 @@ export default function RatioPage() {
       },
     ]);
   };
+
   const handleLoginSuccess = () => {
     setIsLoginOpen(false);
   };
@@ -189,8 +235,12 @@ export default function RatioPage() {
                     { date: "2024-04-01", magnitude: 5.0, probabilite: "10%" },
                     { date: "2024-04-02", magnitude: 4.5, probabilite: "20%" },
                   ],
-                  alertes: alerts.filter((a) => a.arrondissement === selectedArrondissement),
-                  activites: activities.filter((a) => a.arrondissement === selectedArrondissement),
+                  alertes: alerts.filter(
+                    (a) => a.arrondissement === selectedArrondissement
+                  ),
+                  activites: activities.filter(
+                    (a) => a.arrondissement === selectedArrondissement
+                  ),
                 }}
                 alerts={alerts}
                 activities={activities}
