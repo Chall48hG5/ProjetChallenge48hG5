@@ -1,49 +1,46 @@
 "use client";
-
 import React, { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-const LoginForm = () => {
+const RegisterForm = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
-    setSuccessMsg("");
+    setSuccess(false);
     setLoading(true);
 
     const { email, password } = form;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
 
     setLoading(false);
 
     if (error) {
       setErrorMsg(error.message);
     } else {
-      setSuccessMsg("Connexion réussie !");
-      console.log("User:", data.user);
+      setSuccess(true);
     }
   };
 
@@ -75,23 +72,19 @@ const LoginForm = () => {
         />
       </div>
 
-      {errorMsg && (
-        <p className="text-red-600 text-sm">
-          {errorMsg}
-        </p>
-      )}
+      {errorMsg && <div className="text-red-600 text-sm">{errorMsg}</div>}
 
-      {successMsg && (
-        <p className="text-green-600 text-sm">
-          {successMsg}
-        </p>
+      {success && (
+        <div className="text-green-600 text-sm">
+          ✅ Compte créé ! Vérifiez votre boîte mail pour confirmer.
+        </div>
       )}
 
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Connexion..." : "Se connecter"}
+        {loading ? "Création en cours..." : "Créer un compte"}
       </Button>
     </form>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
