@@ -49,6 +49,7 @@ export default function RatioPage() {
   const [selectedArrondissement, setSelectedArrondissement] = useState(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isMapClickable, setIsMapClickable] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -104,7 +105,6 @@ export default function RatioPage() {
     getAlerts();
     getActivities();
 
-
     const getFilteredAlerts = async () => {
       const { data: filteredAlerts } = await supabase
         .from("alert")
@@ -114,12 +114,16 @@ export default function RatioPage() {
       setAlerts(filteredAlerts || []);
     };
 
-    
-
     return () => {
       // subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (alerts !== undefined) {
+      setIsMapClickable(true);
+    }
+  }, [alerts]);
 
   useEffect(() => {
     if (!selectedArrondissement) return;
@@ -142,7 +146,7 @@ export default function RatioPage() {
       setActivities(filteredActivities || []);
     };
 
-     const getMessages = async () => {
+    const getMessages = async () => {
       const { data: messages } = await supabase
         .from("chats")
         .select()
@@ -175,17 +179,15 @@ export default function RatioPage() {
     getFilteredActivities();
 
     return () => {
-      subscription.unsubscribe()
+      subscription.unsubscribe();
     };
   }, [selectedArrondissement]);
 
   const handleSelectArrondissement = (arrondissement) => {
-    console.log(alerts);
+    if (!isMapClickable) return;
 
     let zone = zones.find((z) => z.value === arrondissement);
-
     setSelectedArrondissement(zone.id);
-    console.log(selectedArrondissement);
   };
 
   const handleSendMessage = async (message) => {
@@ -218,7 +220,7 @@ export default function RatioPage() {
         {/* Section carte et détails */}
         <div className="lg:col-span-9">
           <div className="h-[500px] bg-white">
-            {!isLoginOpen && !isRegisterOpen ? (
+            {!isLoginOpen && !isRegisterOpen && alerts? (
               <Map
                 geojsonData={geojsonData}
                 onSelectArrondissement={handleSelectArrondissement}
