@@ -27,7 +27,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
               <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1</svg>.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               Prévisions Sismiques
             </h3>
@@ -51,7 +51,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
             </div>
           </div>
 
-          <div>
+          <div className='max-h-[200px] overflow-scroll'>
             <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
               <svg className="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -59,7 +59,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
               Alertes en cours
             </h3>
             <div className="space-y-3">
-            { alerts.length > 0 ? alerts.map((alerte, index) => (
+            { alerts.filter((a) => {return a.district == arrondissement}).length > 0 ? alerts.filter((a) => {return a.district == arrondissement}).map((alerte, index) => (
                 <div
                   key={index}
                   className="bg-gray-50 rounded-lg p-4 border-l-4 border-yellow-400"
@@ -74,20 +74,20 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
                     </button>
                   </div>
                 </div>
-              )): (<span></span>)}
+              )): (<span>Aucune alerte en cour dans ce district</span>)}
             </div>
           </div>
         </section>
 
-        <section>
-          <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+        <section className='max-h-[400px] overflow-scroll'>
+          <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center ">
             <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             Activités à venir
           </h3>
           <div className="space-y-4">
-            {activities.length > 0 ? activities.filter((a) => {return a.district == arrondissement}).map((activite, index) => (
+            {activities.filter((a) => {return a.district == arrondissement}).length > 0 ? activities.filter((a) => {return a.district == arrondissement}).map((activite, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
@@ -116,7 +116,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
                   </button>
                 </div>
               </div>
-            )):(<span> </span>)}
+            )):(<span className='italic text-red-500'>Aucune activité en cour dans ce district</span>)}
           </div>
         </section>
       </div>

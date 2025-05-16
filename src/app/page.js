@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import Chat from "@/components/Chat";
 import ArrondissementDetails from "@/components/ArrondissementDetails";
 import { get } from "react-hook-form";
+import LoginForm from "@/components/Login";
 
 const Map = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -77,6 +78,7 @@ export default function RatioPage() {
     };
 
     const getActivities = async () => {
+      console.log("aaaa")
       const { data: activities } = await supabase
         .from("activities")
         .select()
@@ -91,11 +93,25 @@ export default function RatioPage() {
     const subscription = supabase
       .channel("live")
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "chats" },
-        (payload) => {
-          getMessages();
-        }
+      "postgres_changes",
+      { event: "*", schema: "public", table: "chats" },
+      (payload) => {
+        getMessages();
+      }
+      )
+      .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "alerts" },
+      (payload) => {
+        getAlerts();
+      }
+      )
+      .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "activities" },
+      (payload) => {
+        getActivities();
+      }
       )
       .subscribe();
 
@@ -151,6 +167,7 @@ export default function RatioPage() {
             </div>
           )}
         </div>
+
 
         {/* Section chat */}
         <div className="lg:col-span-3 bg-white border-l">
