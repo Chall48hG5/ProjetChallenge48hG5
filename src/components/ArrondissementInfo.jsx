@@ -4,7 +4,7 @@ const ArrondissementInfo = ({ arrondissement, onClose }) => {
   // Données simulées pour l'exemple
   const data = {
     seismes: [
-      { date: '2024-03-20', magnitude: 2.1, probabilite: '15%' },
+      { date: '2025-03-20', magnitude: 2.1, probabilite: '15%' },
       { date: '2024-03-25', magnitude: 1.8, probabilite: '10%' },
     ],
     alertes: [

@@ -59,22 +59,25 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
               Alertes en cours
             </h3>
             <div className="space-y-3">
-            { alerts.filter((a) => {return a.district == arrondissement}).length > 0 ? alerts.filter((a) => {return a.district == arrondissement}).map((alerte, index) => (
+            { alerts.filter((a) => {return a.quartier == arrondissement}).length > 0 ? alerts.filter((a) => {return a.quartier == arrondissement}).map((alerte, index) => (
                 <div
                   key={index}
                   className="bg-gray-50 rounded-lg p-4 border-l-4 border-yellow-400"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="font-medium text-gray-800">{alerte.name}</span>
-                      <p className="text-gray-600 mt-1">{alerte.description}</p>
+                      <span className="font-medium text-gray-800">{ alerte.catastrophe }</span>
+                      <p className="text-gray-600 mt-1">Température :{alerte.temperature}</p>
+                      <p className="text-gray-600 mt-1">Humidité : {alerte.humidite}</p>
+                      <p className="text-gray-600 mt-1">Sismicité : {alerte.sismicite}</p>
+
                     </div>
                     <button className="text-blue-500 hover:text-blue-600">
                       En savoir plus
                     </button>
                   </div>
                 </div>
-              )): (<span>Aucune alerte en cour dans ce district</span>)}
+              )): (<span>Aucune alerte en cour dans ce quartier</span>)}
             </div>
           </div>
         </section>
@@ -87,7 +90,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
             Activités à venir
           </h3>
           <div className="space-y-4">
-            {activities.filter((a) => {return a.district == arrondissement}).length > 0 ? activities.filter((a) => {return a.district == arrondissement}).map((activite, index) => (
+            {activities.filter((a) => {return a.quartier == arrondissement}).length > 0 ? activities.filter((a) => {return a.quartier == arrondissement}).map((activite, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
@@ -116,7 +119,7 @@ const ArrondissementDetails = ({ arrondissement, data, alerts, activities}) => {
                   </button>
                 </div>
               </div>
-            )):(<span className='italic text-red-500'>Aucune activité en cour dans ce district</span>)}
+            )):(<span className='italic text-red-500'>Aucune activité en cour dans ce quartier</span>)}
           </div>
         </section>
       </div>

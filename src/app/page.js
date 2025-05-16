@@ -54,6 +54,18 @@ export default function RatioPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
+  const zones = [
+    { id: 1, value: 128 },
+    { id: 2, value: 59 },
+    { id: 3, value: 125 },
+    { id: 4, value: 29 },
+    { id: 5, value: 53 },
+    { id: 6, value: 45 },
+    { id: 7, value: 189 },
+    { id: 8, value: 42 },
+    { id: 9, value: 181 },
+  ];
+
   const [messages, setMessages] = useState([]);
   const [alerts, setAlerts] = useState();
   const [activities, setActivities] = useState([]);
@@ -70,21 +82,19 @@ export default function RatioPage() {
 
     const getAlerts = async () => {
       const { data: alerts } = await supabase
-        .from("alerts")
+        .from("alert")
         .select()
-        .order("created_at", { ascending: true });
-      console.log("aaaaaaaaaa", alerts);
+        .order("date", { ascending: true });
       setAlerts(alerts || []);
     };
 
     const getActivities = async () => {
-      console.log("aaaa")
       const { data: activities } = await supabase
         .from("activities")
         .select()
         .order("date", { ascending: true });
       setActivities(activities || []);
-    }
+    };
 
     getMessages();
     getAlerts();
@@ -101,7 +111,7 @@ export default function RatioPage() {
       )
       .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "alerts" },
+      { event: "*", schema: "public", table: "alert" },
       (payload) => {
         getAlerts();
       }
@@ -121,7 +131,9 @@ export default function RatioPage() {
   }, []);
 
   const handleSelectArrondissement = (arrondissement) => {
-    setSelectedArrondissement(arrondissement);
+
+    let zone = zones.find((z) => z.value === arrondissement);
+    setSelectedArrondissement(zone.id);
     // console.log(arrondissement)
     // console.log(activities)
     // setActivities(activities.filter((activity) => {
