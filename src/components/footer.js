@@ -35,17 +35,6 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">© 2180 Lyon Protection System. Tous droits réservés.</p>
 
-          <div className="flex space-x-4">
-            <Link href="#" className="text-gray-400 hover:text-cyan-400 transition-colors">
-              <Github className="h-5 w-5" />
-            </Link>
-            <Link href="#" className="text-gray-400 hover:text-cyan-400 transition-colors">
-              <Twitter className="h-5 w-5" />
-            </Link>
-            <Link href="#" className="text-gray-400 hover:text-cyan-400 transition-colors">
-              <Instagram className="h-5 w-5" />
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
