@@ -1,6 +1,6 @@
 "use client";
-
 import React from "react";
+
 import geojsonData from "../data/metropole-de-lyon_adr_voie_lieu.adrarrond.json";
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Chat from "@/components/Chat";
 import ArrondissementDetails from "@/components/ArrondissementDetails";
+import { get } from "react-hook-form";
 
 const Map = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -54,6 +55,7 @@ export default function RatioPage() {
 
   const [messages, setMessages] = useState([]);
   const [alerts, setAlerts] = useState();
+  const [activities, setActivities] = useState([]);
   const [selectedArrondissement, setSelectedArrondissement] = useState(null);
 
   useEffect(() => {
@@ -74,8 +76,18 @@ export default function RatioPage() {
       setAlerts(alerts || []);
     };
 
+    const getActivities = async () => {
+      const { data: activities } = await supabase
+        .from("activities")
+        .select()
+        .order("date", { ascending: true });
+      console.log("test10", activities);
+      setActivities(activities || []);
+    }
+
     getMessages();
     getAlerts();
+    getActivities();
 
     const subscription = supabase
       .channel("live")
@@ -127,6 +139,7 @@ export default function RatioPage() {
                 arrondissement={selectedArrondissement}
                 data={mockData}
                 alerts={alerts}
+                activities={activities}
               />
             </div>
           )}
