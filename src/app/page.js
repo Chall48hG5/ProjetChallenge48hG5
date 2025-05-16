@@ -1,6 +1,6 @@
 "use client";
-
 import React from "react";
+
 import geojsonData from "../data/metropole-de-lyon_adr_voie_lieu.adrarrond.json";
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -9,6 +9,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Chat from "@/components/Chat";
 import ArrondissementDetails from "@/components/ArrondissementDetails";
+import { get } from "react-hook-form";
+import LoginForm from "@/components/Login";
 
 const Map = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -54,6 +56,7 @@ export default function RatioPage() {
 
   const [messages, setMessages] = useState([]);
   const [alerts, setAlerts] = useState();
+  const [activities, setActivities] = useState([]);
   const [selectedArrondissement, setSelectedArrondissement] = useState(null);
 
   useEffect(() => {
@@ -74,17 +77,41 @@ export default function RatioPage() {
       setAlerts(alerts || []);
     };
 
+    const getActivities = async () => {
+      console.log("aaaa")
+      const { data: activities } = await supabase
+        .from("activities")
+        .select()
+        .order("date", { ascending: true });
+      setActivities(activities || []);
+    }
+
     getMessages();
     getAlerts();
+    getActivities();
 
     const subscription = supabase
       .channel("live")
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "chats" },
-        (payload) => {
-          getMessages();
-        }
+      "postgres_changes",
+      { event: "*", schema: "public", table: "chats" },
+      (payload) => {
+        getMessages();
+      }
+      )
+      .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "alerts" },
+      (payload) => {
+        getAlerts();
+      }
+      )
+      .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "activities" },
+      (payload) => {
+        getActivities();
+      }
       )
       .subscribe();
 
@@ -95,6 +122,14 @@ export default function RatioPage() {
 
   const handleSelectArrondissement = (arrondissement) => {
     setSelectedArrondissement(arrondissement);
+    // console.log(arrondissement)
+    // console.log(activities)
+    // setActivities(activities.filter((activity) => {
+    //   console.log(activity  )
+    //   // return activity.district == arrondissement
+    // }
+    // )
+    // );
   };
 
   const handleSendMessage = async (message) => {
@@ -127,10 +162,12 @@ export default function RatioPage() {
                 arrondissement={selectedArrondissement}
                 data={mockData}
                 alerts={alerts}
+                activities={activities}
               />
             </div>
           )}
         </div>
+
 
         {/* Section chat */}
         <div className="lg:col-span-3 bg-white border-l">
