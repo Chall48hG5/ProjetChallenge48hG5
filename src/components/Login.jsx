@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from '@/lib/supabase';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+  // const supabase = createClient(
+  //   process.env.NEXT_PUBLIC_SUPABASE_URL,
+  //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // );
 
-const LoginForm = () => {
+const LoginForm = ({ onSuccess }) => {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -44,6 +44,7 @@ const LoginForm = () => {
     } else {
       setSuccessMsg("Connexion réussie !");
       console.log("User:", data.user);
+      if (onSuccess) onSuccess();
     }
   };
 
@@ -75,17 +76,9 @@ const LoginForm = () => {
         />
       </div>
 
-      {errorMsg && (
-        <p className="text-red-600 text-sm">
-          {errorMsg}
-        </p>
-      )}
+      {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
 
-      {successMsg && (
-        <p className="text-green-600 text-sm">
-          {successMsg}
-        </p>
-      )}
+      {successMsg && <p className="text-green-600 text-sm">{successMsg}</p>}
 
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Connexion..." : "Se connecter"}
