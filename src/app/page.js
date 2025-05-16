@@ -175,7 +175,7 @@ export default function RatioPage() {
     getFilteredActivities();
 
     return () => {
-      SubscriptIcon.unsubscribe()
+      subscription.unsubscribe()
     };
   }, [selectedArrondissement]);
 
