@@ -13,12 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from '@/lib/supabase';
 
 export default function ChatSidebar({ room_id }) {
   const [pseudo, setPseudo] = useState("");
@@ -34,6 +29,7 @@ export default function ChatSidebar({ room_id }) {
   };
 
   const sendMessage = async () => {
+    console.log("sssssssssssssss")
     const tempMsg = {
       room_id,
       pseudo,
